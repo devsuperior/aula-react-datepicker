@@ -118,8 +118,10 @@ export default function App() {
           dateFormat="dd/MM/yyyy"
           className="form-field"
           id="birthDate"
-          minDate={new Date()}
+          placeholderText="Birthdate"
+          //minDate={new Date()}
         />
+        { submitted && !selectedDate ? <span id="email-error">Please enter an birthdate</span> : null }
         <button className="form-field" type="submit">
           Register
         </button>
