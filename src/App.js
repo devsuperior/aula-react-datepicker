@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import DatePicker from "react-datepicker"; 
 import "./index.css";
+import "react-datepicker/dist/react-datepicker.css"
 
 export default function App() {
   
@@ -11,6 +13,7 @@ export default function App() {
 
   const [submitted, setSubmitted] = useState(false);
   const [valid, setValid] = useState(false);
+  const [selectedDate, setselectedDate] = useState(null);
 
   const handleFirstNameInputChange = (event) => {
     setValues({...values, firstName: event.target.value})
@@ -24,8 +27,40 @@ export default function App() {
     setValues({...values, email: event.target.value})
   }
 
+  const dateFormatAux = (date) => {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2) 
+      day = '0' + day;
+    
+    return [year, month, day].join('-');
+  }
+
+  const dateFormat = (date) => {
+
+    console.log(new Date(date));
+
+    let formatYearMonthDay = dateFormatAux(date);
+    //console.log(formatYearMonthDay);
+
+    let formatISO8601 = new Date(date).toISOString();
+    //console.log(formatISO8601);
+
+    return [formatYearMonthDay, formatISO8601];
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    let birthDateYMD, birthDateISO8601;
+
+    if (selectedDate != null)
+      [birthDateYMD, birthDateISO8601] = dateFormat(selectedDate);
+
     if(values.firstName && values.lastName && values.email)
       setValid(true)
     setSubmitted(true);
@@ -34,6 +69,9 @@ export default function App() {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
+      birthDate: selectedDate,
+      birthDateFmtYMD: birthDateYMD,
+      birthDateFmtISO8601: birthDateISO8601,
     };
 
     console.log(formData);
@@ -73,6 +111,15 @@ export default function App() {
           name="email"
         />
         { submitted && !values.email ? <span id="email-error">Please enter an email address</span> : null }
+        <DatePicker 
+          selected={selectedDate} 
+          onChange={date => setselectedDate(date)}
+          showTimeSelect
+          dateFormat="dd/MM/yyyy"
+          className="form-field"
+          id="birthDate"
+          minDate={new Date()}
+        />
         <button className="form-field" type="submit">
           Register
         </button>
